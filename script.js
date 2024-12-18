@@ -4453,6 +4453,13 @@ const corn = [
     }
 ]
 
+const excludedCornVarities = [
+    "JS1274CONV-UT",
+    "JS1440CONV-UT",
+    "JS9491CONV-UT",
+    "JS0414CONV-UT"
+]
+
 const soybeans = [
     {
         "variety": "J1464E3",
@@ -5644,8 +5651,18 @@ const soybeans = [
     }
 ]
 
+const excludedSoyVarities = [
+    "AE1220",
+    "J1253XF",
+    "J1534E3",
+    "J2744E3",
+    "AE3500",
+    "AE4201S"
+]
+
 // Function to create and append the table
-function createDataTable(dataSet, cropName) {
+function createDataTable(dataSet, cropName, excludedVarieties) {
+
     // Create and append the h1 element
     const headerElement = document.createElement('h2');
     headerElement.id = cropName.toLowerCase(); // Set the ID to the crop name
@@ -5657,7 +5674,31 @@ function createDataTable(dataSet, cropName) {
     headerElement.appendChild(linkElement);
     document.body.appendChild(headerElement); // Append the h1 to the body
 
+    const varietiesHeader = document.createElement('h3');
+    varietiesHeader.textContent = cropName + " Varieties:";
+    document.body.appendChild(varietiesHeader);
+    const uniqueVarieties = [...new Set(dataSet.map(data => data.variety))];
+    const varietyList = document.createElement('ul');
+    uniqueVarieties.forEach(variety => {
+        const listItem = document.createElement('li');
+        listItem.textContent = variety;
+        varietyList.appendChild(listItem);
+    });
+    document.body.appendChild(varietyList);
 
+    // excluded varieties
+    const excludedVarietiesHeader = document.createElement('h3');
+    excludedVarietiesHeader.textContent = cropName + " Excluded Varieties:";
+    document.body.appendChild(excludedVarietiesHeader);
+
+    const excludedVarietiesList = document.createElement("ul");
+    excludedVarieties.forEach(variety => {
+        const listItem = document.createElement('li');
+        listItem.textContent = variety;
+        excludedVarietiesList.appendChild(listItem);
+    });
+    document.body.appendChild(excludedVarietiesList);
+    
     const traitsHeader = document.createElement('h3');
     traitsHeader.textContent = cropName + " Traits:";
     document.body.appendChild(traitsHeader);
@@ -5669,7 +5710,6 @@ function createDataTable(dataSet, cropName) {
         traitList.appendChild(listItem);
     });
     document.body.appendChild(traitList);
-
 
     // Create table element
     const table = document.createElement('table');
@@ -5689,6 +5729,7 @@ function createDataTable(dataSet, cropName) {
 
     // Create table body
     const tbody = table.createTBody();
+    dataSet = dataSet.filter(data => !excludedVarieties.includes(data.variety));
     dataSet.forEach(data => {
         const row = tbody.insertRow();
         Object.values(data).forEach(text => {
@@ -5702,8 +5743,8 @@ function createDataTable(dataSet, cropName) {
 }
 
 // Call the function to create the table
-createDataTable(soybeans, 'Soybeans');
-createDataTable(corn, 'Corn');
+createDataTable(soybeans, 'Soybeans', excludedSoyVarities);
+createDataTable(corn, 'Corn', excludedCornVarities);
 
 
 
